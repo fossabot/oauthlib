@@ -402,6 +402,16 @@ class InsufficientScopeError(OAuth2Error):
                    "the access token.")
 
 
+class CustomOAuth2Error(OAuth2Error):
+    """
+    This error is a placeholder for all custom errors not described by the RFC.
+    Some of the popular OAuth2 providers are using custom errors.
+    """
+    def __init__(self, error, *args, **kwargs):
+        self.error = error
+        super().__init__(*args, **kwargs)
+
+
 def raise_from_error(error, params=None):
     import inspect
     import sys
@@ -413,3 +423,4 @@ def raise_from_error(error, params=None):
     for _, cls in inspect.getmembers(sys.modules[__name__], inspect.isclass):
         if cls.error == error:
             raise cls(**kwargs)
+    raise CustomOAuth2Error(error=error, **kwargs)
